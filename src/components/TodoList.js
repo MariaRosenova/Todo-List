@@ -1,20 +1,20 @@
 import { useState } from "react";
-import uniqid from 'uniqid';
-
+import uniqid from "uniqid";
 import TodoItem from "./TodoItem";
 
 export default function TodoList() {
   const [todoList, setTodos] = useState([
-    { id: 1, text: "Morning routine" },
-    { id: 2, text: "Coding" },
-    { id: 3, text: "Workout" },
-    { id: 4, text: "Time w fav people" },
+    { id: uniqid(), text: "Morning routine", isDone: false },
+    { id: uniqid(), text: "Coding", isDone: false },
+    { id: uniqid(), text: "Workout", isDone: false },
+    { id: uniqid(), text: "Time w fav people", isDone: false },
   ]);
 
   const onTodoInputBlur = (e) => {
     let todo = {
       id: uniqid(),
       text: e.target.value,
+      isDone: false
     };
 
     setTodos((state) => [...state, todo]);
@@ -23,9 +23,27 @@ export default function TodoList() {
   };
 
   const deleteTodoItemClickHandler = (id) => {
-    setTodos(oldTodos => oldTodos.filter(todo => todo.id !== id))
+    setTodos((oldTodos) => oldTodos.filter((todo) => todo.id !== id));
+  };
+
+  const toggleTodoItemClickHandler = (id) => {
+    setTodos((oldTodos) => {
+      let selectedTodo = oldTodos.find((x) => x.id === id);
+  
+      // Check if selectedTodo exists and has the isDone property
+      if (selectedTodo && selectedTodo.hasOwnProperty('isDone')) {
+        let toggledTodo = { ...selectedTodo, isDone: !selectedTodo.isDone };
+        let restTodos = oldTodos.filter((x) => x.id !== id);
+  
+        return [...restTodos, toggledTodo];
+      }
+  
+      return oldTodos; // If selectedTodo doesn't exist or doesn't have the isDone property, return the oldTodos array as is
+    });
   };
   
+   
+
   return (
     <ul>
       <label htmlFor="todo-name">Add Todo</label>
@@ -37,10 +55,10 @@ export default function TodoList() {
       ></input>
       {todoList.map((todo) => (
         <TodoItem
-          key={todo.id}
-          todo={todo}
-          id={todo.id}
-          onDelete={deleteTodoItemClickHandler}
+        key={todo.id}
+        todo={todo}
+        onDelete={deleteTodoItemClickHandler}
+        onClick={toggleTodoItemClickHandler}
         />
       ))}
     </ul>
