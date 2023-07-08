@@ -1,8 +1,17 @@
-export default function TodoItem({ todo }) {
+import { useEffect } from "react";
+
+export default function TodoItem({ id, onDelete, todo }) {
+  useEffect(() => {
+    console.log(`${id} - Mounted`);
+
+    return () => {
+      console.log(`${id} - Unmounted`);
+    }
+  }, []);
   return (
-    <li style={{ listStyleType: 'none' }}>
+    <li style={{ listStyleType: "none" }}>
       Task: {todo.text}
-      <button onClick={() => console.log("delete")}>DELETE</button>
+      <button onClick={() => onDelete(id)}>DELETE</button>
     </li>
   );
 }
