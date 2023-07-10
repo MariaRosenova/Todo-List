@@ -1,26 +1,22 @@
 import { useEffect, useState } from "react";
 import uniqid from "uniqid";
 import TodoItem from "./TodoItem";
+import { createTodo } from "../services/TodoService";
 
 const API_URL = "http://localhost:8003";
 
 export default function TodoList() {
-  const [todoList, setTodos] = useState([
-    // { id: uniqid(), text: "Morning routine", isDone: false },
-    // { id: uniqid(), text: "Coding", isDone: false },
-    // { id: uniqid(), text: "Workout", isDone: false },
-    // { id: uniqid(), text: "Time w fav people", isDone: false },
-  ]);
+  const [todoList, setTodos] = useState([]);
 
   useEffect(() => {
     fetch(`${API_URL}`)
-    .then(res => res.json())
-    .then(data => {
-      setTodos(Object.values(data));
-    })
-    .catch(error => {
-      console.error('Error', error)
-    })
+      .then((res) => res.json())
+      .then((data) => {
+        setTodos(Object.values(data));
+      })
+      .catch((error) => {
+        console.error("Error", error);
+      });
   }, []);
 
   const onTodoInputBlur = (e) => {
@@ -30,9 +26,17 @@ export default function TodoList() {
       isDone: false,
     };
 
-    setTodos((state) => [...state, todo]);
-
-    e.target.value = "";
+    createTodo(todo)
+      .then((result) => {
+        setTodos((state) => [
+          ...state, 
+          todo
+        ]);
+      e.target.value = "";
+    })
+    .catch(err => {
+      console.error(err);
+    })
   };
 
   const deleteTodoItemClickHandler = (id) => {
@@ -47,7 +51,6 @@ export default function TodoList() {
       if (selectedTodo && selectedTodo.hasOwnProperty("isDone")) {
         let toggledTodo = { ...selectedTodo, isDone: !selectedTodo.isDone };
         let selectedIndex = oldTodos.findIndex((x) => x.id === id);
-        let restTodos = oldTodos.filter((x) => x.id !== id);
 
         return [
           ...oldTodos.slice(0, selectedIndex),
