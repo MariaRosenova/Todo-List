@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import uniqid from "uniqid";
 import TodoItem from "./TodoItem";
 
-const API_URL = "http://localhost:8001";
+const API_URL = "http://localhost:8003";
 
 export default function TodoList() {
   const [todoList, setTodos] = useState([

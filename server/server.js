@@ -1,9 +1,19 @@
-const http = require("http");
+const { createServer } = require('http');
 
-const host = 'localhost';
-const port = 8001;
+const server = createServer((request, response) => {
+  // Set CORS headers to allow requests from 'http://localhost:3000'
+  response.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+  response.setHeader('Access-Control-Allow-Methods', 'GET');
+  response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-const data = {
+  if (request.method === 'OPTIONS') {
+    // Handle preflight requests
+    response.writeHead(204);
+    return response.end();
+  }
+
+  response.writeHead(200, { 'Content-Type': 'application/json' });
+  response.write(JSON.stringify({
     "0": {
       "id": 1,
       "text": "Give dog a bath",
@@ -104,16 +114,8 @@ const data = {
       "text": "Fill gas tank",
       "isDone": false
     }
-  };
-  
-
-const requestListener = function(req, res) {
-    res.setHeader("Content-Type", "application/json");
-    res.writeHead(200);
-    res.end(JSON.stringify(data, null, 3));
-}
-
-const server = http.createServer(requestListener);
-server.listen(port, host, () => {
-    console.log(`Server is running on http://${host}:${port}`);
+  }));
+  return response.end();
 });
+
+server.listen(8003);
