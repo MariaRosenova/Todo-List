@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 
 export default function Form(props) {
-    const [name, setName] = useState(props.tasks)
+    const [name, setName] = useState("");
 
     function handleChange(e) {
         setName(e.target.value);
