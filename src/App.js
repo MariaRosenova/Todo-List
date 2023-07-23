@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { nanoid } from "nanoid";
 import Todo from "./components/Todo";
 import Form from "./components/Form";
@@ -75,7 +75,7 @@ export default function App(props) {
   ));
   const tasksNoun = taskList.length !==1 ? "tasks" : "task";
   const headingText = `${taskList.length} ${tasksNoun} remaining`;  
-  
+  const listHeadingRef = useRef(null);
   return (
     <div className="todoapp stack-large">
       <h1>TodoMatic</h1>

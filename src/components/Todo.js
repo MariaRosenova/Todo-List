@@ -1,6 +1,14 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function Todo(props) {
+
+  function usePrevious(value) {
+    const ref = useRef();
+    useEffect(() => {
+      ref.current = value;
+    })
+    return ref.current;
+  }
   const [isEditing, setEditing] = useState(false);
   const [newName, setNewName] = useState("");
 
@@ -14,6 +22,10 @@ export default function Todo(props) {
     setNewName("");
     setEditing(false);
   }
+  // these are a reference  1.Edit button 2.The edit field in the temp
+  // they will not have value until we attach them
+  const editFieldRef = useRef(null); 
+  const editButtonRef = useRef(null);
 
   const editingTemplate = (
     <form className="stack-small" onSubmit={handleSubmit}>
@@ -22,11 +34,13 @@ export default function Todo(props) {
           New name for {props.name}
         </label>
         <input
-         id={props.id} 
-         className="todo-text" 
-         type="text" 
-         value={newName}
-         onChange={handleChange}/>
+          id={props.id}
+          className="todo-text"
+          type="text"
+          value={newName}
+          onChange={handleChange}
+          ref={editFieldRef}
+        />
       </div>
       <div className="btn-group">
         <button
@@ -59,7 +73,11 @@ export default function Todo(props) {
         </label>
       </div>
       <div className="btn-group">
-        <button type="button" className="btn" onClick={() => setEditing(true)}>
+        <button 
+          type="button" 
+          className="btn" 
+          onClick={() => setEditing(true)}
+          ref={editButtonRef}>
           Edit <span className="visually-hidden">{props.name}</span>
         </button>
         <button
@@ -72,6 +90,17 @@ export default function Todo(props) {
       </div>
     </div>
   );
+  const wasEditing = usePrevious(isEditing);
+  
+  useEffect(() => {
+    if(!wasEditing && isEditing) {
+      editFieldRef.current.focus();
+    }
+    if(wasEditing && !isEditing) {
+      editButtonRef.current.focus();
+    }
+  }, [wasEditing, isEditing]) /* react reads the current value of editFieldRef 
+                  and moves browser to focus to it */
 
   return <li className="todo">{isEditing ? editingTemplate : viewTemplate}</li>;
 }
